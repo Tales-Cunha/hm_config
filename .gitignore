@@ -1,0 +1,24 @@
+# Nix/Home Manager
+.direnv/
+result
+result-*
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*~
+*.swp
+*.swo
