@@ -9,19 +9,18 @@
 
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "sudo" "direnv" "docker" "kubectl" ];
+      plugins = [ "git" "sudo" "direnv" ];
       theme = "";  # Use starship
     };
 
-    # Essential aliases
+    # Essential aliases (focused and minimal)
     shellAliases = {
-      # Home Manager
+      # Home Manager (essential)
       hm = "home-manager switch";
       hm-edit = "home-manager edit";
       hm-diff = "home-manager diff";
-      hm-clean = "home-manager clean";
 
-      # Git essentials
+      # Git essentials (core workflow)
       gst = "git status";
       gaa = "git add --all";
       gc = "git commit -m";
@@ -32,22 +31,25 @@
       gd = "git diff";
       glog = "git log --oneline --graph --decorate";
 
-      # Modern replacements
+      # Modern replacements (one per tool)
       cat = "bat";
       ls = "eza --icons";
       ll = "eza -la --icons";
-      la = "eza -la --icons";
-      lt = "eza --tree --icons";
+      tree = "eza --tree --icons";
       cd = "z";
       ps = "procs";
       du = "dust";
       df = "duf";
       top = "btop";
 
-      # Utilities
+      # Editor (tmux integration)
       v = "nvim";
       vim = "nvim";
+      
+      # Tmux workflow
       tms = "tmux-sessionizer";
+      ta = "tmux attach-session -t";
+      tl = "tmux list-sessions";
       
       # Quick navigation
       ".." = "cd ..";
@@ -55,11 +57,7 @@
       "...." = "cd ../../..";
       
       # System info
-      sysinfo = "neofetch";
-      
-      # Quick file operations
-      mkd = "mkdir -p";
-      rmd = "rmdir";
+      info = "neofetch";
     };
 
     initContent = ''
@@ -143,44 +141,51 @@
     nix-direnv.enable = true;
   };
   
-  # Additional ZSH functions
+  # Additional ZSH functions (essential productivity helpers)
   xdg.configFile."zsh/functions.zsh".text = ''
-    # Quick project finder
+    # Quick project finder (integrates with tmux-sessionizer)
     proj() {
       local dir
-      dir=$(find ~/projects ~/work ~/personal -maxdepth 2 -type d -name "$1*" 2>/dev/null | head -1)
+      dir=$(find ~/projects ~/work ~/personal -maxdepth 2 -type d -name "*$1*" 2>/dev/null | head -1)
       if [[ -n "$dir" ]]; then
         cd "$dir"
+        # Auto-start tmux session if not in tmux
+        if [[ -z "$TMUX" ]]; then
+          tmux-sessionizer "$dir"
+        fi
       else
         echo "Project not found: $1"
       fi
     }
     
-    # Extract any archive
+    # Extract any archive (universal extractor)
     extract() {
       if [ -f $1 ] ; then
         case $1 in
-          *.tar.bz2)   tar xjf $1     ;;
-          *.tar.gz)    tar xzf $1     ;;
-          *.bz2)       bunzip2 $1     ;;
-          *.rar)       unrar e $1     ;;
-          *.gz)        gunzip $1      ;;
-          *.tar)       tar xf $1      ;;
-          *.tbz2)      tar xjf $1     ;;
-          *.tgz)       tar xzf $1     ;;
-          *.zip)       unzip $1       ;;
-          *.Z)         uncompress $1  ;;
-          *.7z)        7z x $1        ;;
-          *)           echo "'$1' cannot be extracted via extract()" ;;
+          *.tar.bz2|*.tbz2) tar xjf $1     ;;
+          *.tar.gz|*.tgz)   tar xzf $1     ;;
+          *.bz2)            bunzip2 $1     ;;
+          *.gz)             gunzip $1      ;;
+          *.tar)            tar xf $1      ;;
+          *.zip)            unzip $1       ;;
+          *.7z)             7z x $1        ;;
+          *)                echo "'$1' cannot be extracted via extract()" ;;
         esac
       else
         echo "'$1' is not a valid file"
       fi
     }
     
-    # Make and change to directory
+    # Make and change to directory (with tmux integration)
     mkcd() {
       mkdir -p "$1" && cd "$1"
+      # If it's a project directory, offer to start tmux session
+      if [[ "$1" =~ (project|work|dev) ]] && [[ -z "$TMUX" ]]; then
+        read "response?Start tmux session for $1? (y/n): "
+        if [[ "$response" =~ ^[Yy]$ ]]; then
+          tmux-sessionizer "$(pwd)"
+        fi
+      fi
     }
   '';
 }

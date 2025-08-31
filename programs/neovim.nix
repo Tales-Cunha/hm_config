@@ -9,29 +9,27 @@
     
     # System tools that Neovim plugins need
     extraPackages = with pkgs; [
-      # LSP servers (language intelligence)
+      # LSP servers (essential languages only)
       lua-language-server
       nil # Nix LSP
       nodePackages.typescript-language-server
-      nodePackages."@tailwindcss/language-server"
       nodePackages.vscode-langservers-extracted # HTML, CSS, JSON, ESLint
       pyright
       rust-analyzer
       gopls
       
-      # Formatters (code formatting)
+      # Formatters (essential ones only)
       stylua
       nixpkgs-fmt
       nodePackages.prettier
       black
       rustfmt
       
-      # Tools (searching, file operations, etc.)
+      # Tools (searching, file operations)
       ripgrep      # Fast search (Telescope uses this)
       fd           # Fast find (Telescope uses this)
       nodejs_20    # Node.js runtime
       tree-sitter  # Syntax highlighting
-      lazygit      # Git TUI
       shellcheck   # Shell script linting
       shfmt        # Shell script formatting
     ];
@@ -53,19 +51,19 @@
       vim.g.mapleader = " "
       vim.g.maplocalleader = " "
       
-      -- Setup LazyVim
+      -- Setup LazyVim with tmux integration focus
       require("lazy").setup({
         spec = {
           { "LazyVim/LazyVim", import = "lazyvim.plugins" },
           
-          -- Language support
+          -- Language support (essential only)
           { import = "lazyvim.plugins.extras.lang.typescript" },
           { import = "lazyvim.plugins.extras.lang.json" },
           { import = "lazyvim.plugins.extras.lang.rust" },
           { import = "lazyvim.plugins.extras.lang.python" },
           { import = "lazyvim.plugins.extras.lang.go" },
           
-          -- Tools
+          -- Tools (formatting only, no terminal plugins since using tmux)
           { import = "lazyvim.plugins.extras.formatting.prettier" },
           { import = "lazyvim.plugins.extras.linting.eslint" },
           { import = "lazyvim.plugins.extras.editor.mini-files" },
@@ -111,7 +109,31 @@
       -- Add your custom autocommands here
     '';
     
-    # Custom plugins
+    "nvim/lua/plugins/tmux-integration.lua".text = ''
+      return {
+        -- Tmux navigation (seamless pane switching)
+        {
+          "christoomey/vim-tmux-navigator",
+          lazy = false,
+          config = function()
+            -- Disable tmux navigator when zooming the vim pane
+            vim.g.tmux_navigator_disable_when_zoomed = 1
+          end,
+        },
+        
+        -- Better tmux integration
+        {
+          "preservim/vimux",
+          cmd = { "VimuxRunCommand", "VimuxRunLastCommand" },
+          keys = {
+            { "<leader>vr", "<cmd>VimuxRunCommand<cr>", desc = "Run command in tmux" },
+            { "<leader>vl", "<cmd>VimuxRunLastCommand<cr>", desc = "Run last command in tmux" },
+            { "<leader>vq", "<cmd>VimuxCloseRunner<cr>", desc = "Close tmux runner" },
+          },
+        },
+      }
+    '';
+    
     "nvim/lua/plugins/copilot.lua".text = ''
       return {
         -- GitHub Copilot

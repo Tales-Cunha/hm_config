@@ -1,24 +1,25 @@
-# Nix/Home Manager
-.direnv/
+# Home Manager build outputs
 result
 result-*
 
-# Environment
-.env
-.env.local
+# Nix build outputs
+.direnv/
+.envrc
 
-# IDE
-.vscode/
-.idea/
+# Editor temporary files
+.vscode/settings.json
+*.swp
+*.swo
+*~
 
-# System
+# OS generated files
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
+# Backup files
+*.bak
+*.backup
 
-# Temporary files
-*~
-*.swp
-*.swo
+# Local configuration overrides
+local.nix
+secrets.nix
