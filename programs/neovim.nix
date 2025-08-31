@@ -106,7 +106,12 @@
     
     "nvim/lua/config/autocmds.lua".text = ''
       -- Custom autocommands (LazyVim loads this automatically)
-      -- Add your custom autocommands here
+      -- Auto-resize panes when vim resizes
+      vim.api.nvim_create_autocmd("VimResized", {
+        group = vim.api.nvim_create_augroup("AutoResize", { clear = true }),
+        pattern = "*",
+        command = "wincmd =",
+      })
     '';
     
     "nvim/lua/plugins/tmux-integration.lua".text = ''

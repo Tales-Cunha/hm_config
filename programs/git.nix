@@ -4,7 +4,7 @@
   programs.git = {
     enable = true;
     userName = "Tales Cunha";
-    userEmail = "your.email@example.com"; # Update this with your actual email
+    userEmail = "tales@example.com"; # TODO: Update with your actual email
     
     extraConfig = {
       init.defaultBranch = "main";
@@ -13,9 +13,15 @@
       push.autoSetupRemote = true;
       rerere.enabled = true;
       
-      # Better diffs
+      # Better diffs and merges
       diff.algorithm = "patience";
       merge.conflictstyle = "diff3";
+      merge.tool = "vimdiff";
+      
+      # Performance improvements
+      core.preloadindex = true;
+      core.fscache = true;
+      gc.auto = 256;
       
       # Colors
       color.ui = "auto";

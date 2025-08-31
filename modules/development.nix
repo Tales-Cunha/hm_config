@@ -3,23 +3,19 @@
 
 {
   home.packages = with pkgs; [
-    # Version control
-    lazygit     # Git TUI (one git interface)
+    # Version control (one git interface)
+    lazygit     # Git TUI
     gh          # GitHub CLI
     
     # Programming languages (essential ones only)
     nodejs_20 
-    yarn        # Node package manager
+    python3
     rustc
     cargo
-    python3
     go
     
     # Data processing
     jq          # JSON processor
     yq          # YAML processor
-    
-    # Container tools (if you use them)
-    docker-compose
   ];
 }
