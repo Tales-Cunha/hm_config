@@ -1,6 +1,80 @@
-# Home Manager build outputs
-result
-result-*
+# Home Manager build artifacts
+result*
+.direnv/
+
+# Nix build outputs
+flake.lock
+
+# Home Manager generations
+.local/state/home-manager/
+
+# Temporary files
+*.bak
+*.tmp
+*~
+*.swp
+*.swo
+
+# Backup files created by scripts
+*.bak.*
+
+# System files  
+.DS_Store
+Thumbs.db
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# User-specific customizations (uncomment if you want to ignore them)
+# programs/git.nix
+
+# Local testing files
+test-output/
+*.test
+
+# Shell history in repository directory
+.bash_history
+.zsh_history
+
+# SSH keys (if accidentally added)
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+
+# Environment files
+.env*
+!.env.example
+
+# Cache directories
+.cache/
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+logs/
+
+# OS-specific
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.fuse_hidden*
+.Trash-*
+.nfs*
 
 # Nix build outputs
 .direnv/

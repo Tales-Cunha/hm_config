@@ -33,12 +33,17 @@ info "Detected system: $SYSTEM"
 # Install Nix if not present
 if ! command -v nix &> /dev/null; then
   info "Installing Nix..."
-  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
   
-  # Source nix
-  if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
-    . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+  # Check if we're in a container or system without systemd
+  if ! systemctl is-system-running &>/dev/null && ! pgrep systemd &>/dev/null; then
+    info "Detected container/non-systemd environment, using no-daemon installer..."
+    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux --init none
+  else
+    info "Using standard systemd installer..."
+    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
   fi
+  
+    # Source nix\n  if [ -f \"/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh\" ]; then\n    . \"/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh\"\n  elif [ -f \"$HOME/.nix-profile/etc/profile.d/nix.sh\" ]; then\n    . \"$HOME/.nix-profile/etc/profile.d/nix.sh\"\n  fi
   
   # Enable flakes
   mkdir -p ~/.config/nix

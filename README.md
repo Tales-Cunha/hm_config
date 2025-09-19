@@ -112,6 +112,16 @@ git pull
 home-manager switch --flake ".#$(whoami)"
 ```
 
+## Testing
+
+To test this configuration on a clean system, see [`TESTING.md`](TESTING.md) for comprehensive testing instructions.
+
+**Quick test**: Use the removal script (⚠️ **WARNING**: removes all Nix data!):
+```bash
+./scripts/remove-nix.sh  # Clean removal
+./bootstrap.sh           # Test fresh install
+```
+
 ## Requirements
 
 - Linux system (non-NixOS)
