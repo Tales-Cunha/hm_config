@@ -4,18 +4,30 @@
 
 set -euo pipefail
 
+# Parse arguments
+FORCE_REINSTALL=false
+if [[ "${1:-}" == "--force" ]] || [[ "${1:-}" == "-f" ]]; then
+    FORCE_REINSTALL=true
+    info "Force reinstall mode enabled"
+fi
+
 # Colors
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 RED='\033[0;31m'
+YELLOW='\033[1;33m'
 NC='\033[0m'
 
 info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
+warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 
 info "Home Manager Bootstrap - Minimal Installation"
 echo "=============================================="
+echo "Usage: $0 [--force|-f]"
+echo "  --force, -f    Force reinstall Nix even if already present"
+echo ""
 
 # Get user info
 USER=${USER:-$(whoami)}
@@ -30,9 +42,27 @@ case $ARCH in
 esac
 info "Detected system: $SYSTEM"
 
-# Install Nix if not present
-if ! command -v nix &> /dev/null; then
-  info "Installing Nix..."
+# Install Nix if not present or force reinstall
+if ! command -v nix &> /dev/null || [ "$FORCE_REINSTALL" = true ]; then
+  if [ "$FORCE_REINSTALL" = true ] && command -v nix &> /dev/null; then
+    info "Force reinstall requested, removing existing Nix installation..."
+  else
+    info "Installing Nix..."
+  fi
+  
+  # Check for existing installation receipt and handle it
+  if [ -f "/nix/receipt.json" ]; then
+    info "Found existing Nix installation receipt, attempting to uninstall cleanly..."
+    if command -v /nix/nix-installer &> /dev/null; then
+      /nix/nix-installer uninstall || {
+        warning "Automatic uninstall failed, trying alternative cleanup..."
+        # If the uninstaller fails, we'll try to proceed anyway
+        # The new installer might be able to handle the existing installation
+      }
+    else
+      warning "Nix installer not found, proceeding with installation (installer may handle existing setup)..."
+    fi
+  fi
   
   # Check if we're in a container or system without systemd
   if ! systemctl is-system-running &>/dev/null && ! pgrep systemd &>/dev/null; then

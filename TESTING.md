@@ -53,7 +53,14 @@ echo $PATH | grep nix  # should be empty
 # Test the bootstrap script
 ./bootstrap.sh
 
-# Or test from GitHub (if pushed)\n# curl -sSL https://raw.githubusercontent.com/Tales-Cunha/hm_config/main/bootstrap.sh | bash
+# Or with force reinstall (if you get installation conflicts)
+./bootstrap.sh --force
+
+# Quick cleanup for testing (alternative to remove-nix.sh)
+./scripts/cleanup-nix.sh
+
+# Or test from GitHub (if pushed)
+# curl -sSL https://raw.githubusercontent.com/Tales-Cunha/hm_config/main/bootstrap.sh | bash
 ```
 
 ### Step 4: Verify Installation
