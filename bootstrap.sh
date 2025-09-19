@@ -15,7 +15,7 @@ success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 info "Home Manager Bootstrap - Minimal Installation"
-echo "============================================="
+echo "=============================================="
 
 # Get user info
 USER=${USER:-$(whoami)}
@@ -43,13 +43,31 @@ if ! command -v nix &> /dev/null; then
     curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
   fi
   
-    # Source nix\n  if [ -f \"/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh\" ]; then\n    . \"/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh\"\n  elif [ -f \"$HOME/.nix-profile/etc/profile.d/nix.sh\" ]; then\n    . \"$HOME/.nix-profile/etc/profile.d/nix.sh\"\n  fi
+  # Source nix after installation
+  if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
+    . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+  elif [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+    . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+  fi
+  
+  # Verify Nix is now available
+  if ! command -v nix &> /dev/null; then
+    error "Nix installation failed - command not found after sourcing"
+    info "Try manually running: source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+    exit 1
+  fi
   
   # Enable flakes
   mkdir -p ~/.config/nix
   echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
 else
   success "Nix already installed"
+  # Still need to source it for the current session
+  if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
+    . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+  elif [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+    . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+  fi
 fi
 
 # Setup config directory
