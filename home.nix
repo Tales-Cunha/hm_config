@@ -1,12 +1,9 @@
 { config, pkgs, ... }:
 
 {
-  # Basic user configuration
-  home = {
-    username = "talescunha";
-    homeDirectory = "/home/talescunha";
-    stateVersion = "25.05";
-  };
+  # Basic user configuration (will be set by flake parameters)
+  # home.username and home.homeDirectory are set by the flake
+  home.stateVersion = "25.05"; # Don't change this after first install
 
   # Import modular configurations
   imports = [

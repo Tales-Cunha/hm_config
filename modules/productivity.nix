@@ -11,5 +11,9 @@
     
     # Document processing (if you need it)
     pandoc      # Universal document converter
+
+    obsidian 
+
+    telegram-desktop
   ];
 }

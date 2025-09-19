@@ -3,8 +3,8 @@
 {
   programs.git = {
     enable = true;
-    userName = "Tales Cunha";
-    userEmail = "tales@example.com"; # TODO: Update with your actual email
+    userName = "Your Name"; # TODO: Change this to your name
+    userEmail = "your@email.com"; # TODO: Change this to your email
     
     extraConfig = {
       init.defaultBranch = "main";
